@@ -1,0 +1,675 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analyzer</title>
+    <style>
+/* ============================================
+   styles.css – Styling für den Data Analyzer
+   (im gleichen Stil wie der Mini Calibration Analyzer)
+   ============================================ */
+
+/* --- Allgemeine Einstellungen --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+/* --- Kopfbereich --- */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+header h1 {
+    font-size: 2rem;
+    color: #1a5276;
+}
+
+.zeitstempel {
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* --- Abschnittsüberschriften --- */
+h2 {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #ddd;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+/* --- Upload-Bereich --- */
+.upload-box {
+    background: white;
+    border: 2px dashed #b3cde0;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-box.dragover {
+    border-color: #2980b9;
+    background: #eaf2f8;
+}
+
+.upload-button {
+    display: inline-block;
+    background-color: #2980b9;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.upload-button:hover {
+    background-color: #1f618d;
+}
+
+.hinweis {
+    color: #777;
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+}
+
+.dateiname {
+    margin-top: 0.6rem;
+    font-style: italic;
+    color: #555;
+}
+
+/* --- Spaltenwahl --- */
+.spaltenwahl label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.spaltenwahl select {
+    width: 100%;
+    max-width: 360px;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    font-size: 1rem;
+}
+
+/* --- Kennzahlen-Karten --- */
+.karten {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.karte {
+    background: white;
+    border-radius: 8px;
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #2980b9;
+}
+
+.karte .label {
+    display: block;
+    font-size: 0.8rem;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.karte .wert {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* --- Diagramm --- */
+.diagramm canvas {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    max-height: 360px;
+}
+
+/* --- Datentabelle --- */
+.tabelle-scroll {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #2980b9;
+    color: white;
+}
+
+th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+tbody tr:hover {
+    background-color: #eaf2f8;
+}
+
+/* --- Fehlermeldung --- */
+.fehler {
+    background: #fdedec;
+    color: #c0392b;
+    border-left: 4px solid #e74c3c;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+}
+
+/* --- Fußzeile --- */
+footer {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+</style>
+    <!-- SheetJS: Bibliothek zum Lesen von Excel-Dateien (xlsx, xls) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Chart.js: für einfache Diagramme -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Data Analyzer</h1>
+        <p class="zeitstempel">CSV-, Excel- oder TSV-Datei laden und analysieren</p>
+    </header>
+
+    <main>
+        <!-- Datei-Auswahl -->
+        <section class="upload">
+            <h2>1. Datei laden</h2>
+            <div class="upload-box" id="uploadBox">
+                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.tsv" hidden>
+                <label for="fileInput" class="upload-button">Datei auswählen</label>
+                <p class="hinweis">
+                    Unterstützte Formate: <strong>.csv</strong>, <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.tsv</strong>
+                </p>
+                <p class="dateiname" id="dateiname">Keine Datei ausgewählt</p>
+            </div>
+        </section>
+
+        <!-- Auswahl der zu analysierenden Spalte (wird dynamisch befüllt) -->
+        <section class="spaltenwahl" id="spaltenwahlSection" hidden>
+            <h2>2. Spalte wählen</h2>
+            <label for="spalteSelect">Numerische Spalte für die Analyse:</label>
+            <select id="spalteSelect"></select>
+        </section>
+
+        <!-- Kennzahlen -->
+        <section class="kennzahlen" id="kennzahlenSection" hidden>
+            <h2>Kennzahlen</h2>
+            <div class="karten" id="karten"></div>
+        </section>
+
+        <!-- Diagramm -->
+        <section class="diagramm" id="diagrammSection" hidden>
+            <h2>Verteilung</h2>
+            <canvas id="chart"></canvas>
+        </section>
+
+        <!-- Datentabelle -->
+        <section class="messtabelle" id="tabelleSection" hidden>
+            <h2>Datenvorschau (erste 50 Zeilen)</h2>
+            <div class="tabelle-scroll">
+                <table id="datenTabelle"></table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Data Analyzer &ndash; HTML/JS-Projekt erstellt von Neven Odrljin</p>
+        <p style="margin-top:0.5rem;font-size:0.95em;">
+            Kontakt:
+            <a href="https://www.linkedin.com/in/neveno/" target="_blank" rel="noopener">LinkedIn</a> |
+            <a href="https://odrljin.ch/" target="_blank" rel="noopener">odrljin.ch</a>
+        </p>
+    </footer>
+
+    <script>
+/* ============================================
+   app.js – Logik für den Data Analyzer
+   Liest CSV / Excel direkt im Browser ein,
+   berechnet Kennzahlen und zeigt Diagramm + Tabelle.
+   ============================================ */
+
+// --- Globale Zustände ---
+let aktuelleDaten = [];   // Array von Objekten (eine Zeile pro Eintrag)
+let spaltenNamen = [];    // Reihenfolge der Spalten
+let chartInstanz = null;  // aktuelles Chart.js-Diagramm
+
+// --- DOM-Referenzen ---
+const fileInput = document.getElementById("fileInput");
+const uploadBox = document.getElementById("uploadBox");
+const dateinameEl = document.getElementById("dateiname");
+const spaltenwahlSection = document.getElementById("spaltenwahlSection");
+const spalteSelect = document.getElementById("spalteSelect");
+const kennzahlenSection = document.getElementById("kennzahlenSection");
+const kartenEl = document.getElementById("karten");
+const diagrammSection = document.getElementById("diagrammSection");
+const tabelleSection = document.getElementById("tabelleSection");
+const datenTabelle = document.getElementById("datenTabelle");
+
+// --- Datei-Auswahl per Klick ---
+fileInput.addEventListener("change", (e) => {
+    const datei = e.target.files[0];
+    if (datei) ladeDatei(datei);
+});
+
+// --- Drag & Drop ---
+["dragenter", "dragover"].forEach(ev => {
+    uploadBox.addEventListener(ev, (e) => {
+        e.preventDefault();
+        uploadBox.classList.add("dragover");
+    });
+});
+["dragleave", "drop"].forEach(ev => {
+    uploadBox.addEventListener(ev, (e) => {
+        e.preventDefault();
+        uploadBox.classList.remove("dragover");
+    });
+});
+uploadBox.addEventListener("drop", (e) => {
+    const datei = e.dataTransfer.files[0];
+    if (datei) {
+        fileInput.value = "";
+        ladeDatei(datei);
+    }
+});
+
+/**
+ * Lädt eine Datei und entscheidet je nach Endung
+ * zwischen CSV- und Excel-Parser.
+ */
+function ladeDatei(datei) {
+    dateinameEl.textContent = "Datei: " + datei.name;
+    const endung = datei.name.split(".").pop().toLowerCase();
+    const reader = new FileReader();
+
+    reader.onerror = () => zeigeFehler("Datei konnte nicht gelesen werden.");
+
+    if (endung === "csv" || endung === "tsv" || endung === "txt") {
+        reader.onload = (e) => {
+            try {
+                const trenner = endung === "tsv" ? "\t" : erkenneTrenner(e.target.result);
+                const daten = parseCSV(e.target.result, trenner);
+                verarbeiteDaten(daten);
+            } catch (err) {
+                zeigeFehler("CSV konnte nicht verarbeitet werden: " + err.message);
+            }
+        };
+        reader.readAsText(datei);
+    } else if (endung === "xlsx" || endung === "xls") {
+        reader.onload = (e) => {
+            try {
+                const workbook = XLSX.read(new Uint8Array(e.target.result), { type: "array" });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const daten = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+                verarbeiteDaten(daten);
+            } catch (err) {
+                zeigeFehler("Excel-Datei konnte nicht gelesen werden: " + err.message);
+            }
+        };
+        reader.readAsArrayBuffer(datei);
+    } else {
+        zeigeFehler("Format nicht unterstützt: ." + endung);
+    }
+}
+
+/**
+ * Erkennt den Spaltentrenner einer CSV (Komma oder Semikolon).
+ */
+function erkenneTrenner(text) {
+    const erstZeile = text.split(/\r?\n/)[0] || "";
+    const kommas = (erstZeile.match(/,/g) || []).length;
+    const semis = (erstZeile.match(/;/g) || []).length;
+    return semis > kommas ? ";" : ",";
+}
+
+/**
+ * Einfacher CSV-Parser mit Unterstützung für Anführungszeichen.
+ * Gibt ein Array von Objekten zurück (Schlüssel = Spaltenüberschriften).
+ */
+function parseCSV(text, trenner) {
+    const zeilen = text.split(/\r?\n/).filter(z => z.length > 0);
+    if (zeilen.length === 0) return [];
+
+    const splitZeile = (zeile) => {
+        const ergebnis = [];
+        let aktuell = "";
+        let inQuotes = false;
+        for (let i = 0; i < zeile.length; i++) {
+            const c = zeile[i];
+            if (c === '"' ) {
+                if (inQuotes && zeile[i + 1] === '"') { aktuell += '"'; i++; }
+                else { inQuotes = !inQuotes; }
+            } else if (c === trenner && !inQuotes) {
+                ergebnis.push(aktuell);
+                aktuell = "";
+            } else {
+                aktuell += c;
+            }
+        }
+        ergebnis.push(aktuell);
+        return ergebnis;
+    };
+
+    const kopf = splitZeile(zeilen[0]).map(s => s.trim());
+    const daten = [];
+    for (let i = 1; i < zeilen.length; i++) {
+        const werte = splitZeile(zeilen[i]);
+        const obj = {};
+        kopf.forEach((spalte, idx) => {
+            obj[spalte] = (werte[idx] ?? "").trim();
+        });
+        daten.push(obj);
+    }
+    return daten;
+}
+
+/**
+ * Speichert die Daten, befüllt die Spaltenauswahl
+ * und stößt die Auswertung an.
+ */
+function verarbeiteDaten(daten) {
+    entferneFehler();
+    if (!daten || daten.length === 0) {
+        zeigeFehler("Datei enthält keine Daten.");
+        return;
+    }
+    aktuelleDaten = daten;
+    spaltenNamen = Object.keys(daten[0]);
+
+    fuelleSpaltenAuswahl();
+    zeigeTabelle();
+
+    // Sektionen sichtbar machen
+    spaltenwahlSection.hidden = false;
+    tabelleSection.hidden = false;
+
+    // Erste numerische Spalte auswählen und analysieren
+    const ersteNumerische = spaltenNamen.find(sp => istNumerischeSpalte(sp));
+    if (ersteNumerische) {
+        spalteSelect.value = ersteNumerische;
+        analysiereSpalte(ersteNumerische);
+    } else {
+        kennzahlenSection.hidden = true;
+        diagrammSection.hidden = true;
+        zeigeFehler("Keine numerische Spalte gefunden – nur Tabelle wird angezeigt.");
+    }
+}
+
+/**
+ * Füllt das Dropdown mit allen Spalten;
+ * markiert nur numerische als auswählbar (Textspalten werden grau).
+ */
+function fuelleSpaltenAuswahl() {
+    spalteSelect.innerHTML = "";
+    spaltenNamen.forEach(sp => {
+        const option = document.createElement("option");
+        option.value = sp;
+        const numerisch = istNumerischeSpalte(sp);
+        option.textContent = numerisch ? sp : sp + "  (nicht numerisch)";
+        option.disabled = !numerisch;
+        spalteSelect.appendChild(option);
+    });
+    spalteSelect.onchange = () => analysiereSpalte(spalteSelect.value);
+}
+
+/**
+ * Prüft, ob in einer Spalte überwiegend Zahlen stehen.
+ */
+function istNumerischeSpalte(spalte) {
+    let zahlen = 0;
+    let gesamt = 0;
+    for (const zeile of aktuelleDaten) {
+        const wert = zeile[spalte];
+        if (wert === "" || wert === null || wert === undefined) continue;
+        gesamt++;
+        if (!isNaN(parseFloat(String(wert).replace(",", ".")))) zahlen++;
+    }
+    return gesamt > 0 && zahlen / gesamt >= 0.7;
+}
+
+/**
+ * Wandelt einen Wert in eine Zahl um (akzeptiert "," als Dezimaltrenner).
+ */
+function zuZahl(wert) {
+    if (wert === "" || wert === null || wert === undefined) return NaN;
+    return parseFloat(String(wert).replace(",", "."));
+}
+
+/**
+ * Berechnet Kennzahlen + zeichnet Diagramm für eine Spalte.
+ */
+function analysiereSpalte(spalte) {
+    const werte = aktuelleDaten
+        .map(z => zuZahl(z[spalte]))
+        .filter(w => !isNaN(w));
+
+    if (werte.length === 0) {
+        zeigeFehler("Spalte enthält keine gültigen Zahlen.");
+        return;
+    }
+
+    const kennzahlen = berechneKennzahlen(werte);
+    rendereKarten(kennzahlen);
+    zeichneHistogramm(werte, spalte, kennzahlen._min, kennzahlen._max);
+
+    kennzahlenSection.hidden = false;
+    diagrammSection.hidden = false;
+}
+
+/**
+ * Statistische Kennzahlen: Anzahl, Min, Max, Mittelwert,
+ * Median, Standardabweichung, Summe.
+ */
+function berechneKennzahlen(werte) {
+    const n = werte.length;
+    // Schleifen statt Math.min(...werte) / werte.reduce(...) mit Spread,
+    // damit auch große Dateien (>100k Zeilen) keinen Stack-Overflow auslösen.
+    let summe = 0;
+    let min = werte[0];
+    let max = werte[0];
+    for (let i = 0; i < n; i++) {
+        const w = werte[i];
+        summe += w;
+        if (w < min) min = w;
+        if (w > max) max = w;
+    }
+    const mittel = summe / n;
+
+    const sortiert = werte.slice().sort((a, b) => a - b);
+    const median = n % 2 === 0
+        ? (sortiert[n / 2 - 1] + sortiert[n / 2]) / 2
+        : sortiert[Math.floor(n / 2)];
+
+    let varSumme = 0;
+    for (let i = 0; i < n; i++) {
+        const d = werte[i] - mittel;
+        varSumme += d * d;
+    }
+    const stdAbw = Math.sqrt(varSumme / n);
+
+    return {
+        "Anzahl": n,
+        "Minimum": formatZahl(min),
+        "Maximum": formatZahl(max),
+        "Mittelwert": formatZahl(mittel),
+        "Median": formatZahl(median),
+        "Std.-Abw.": formatZahl(stdAbw),
+        "Summe": formatZahl(summe),
+        // interne Werte (nicht angezeigt) für das Histogramm:
+        _min: min,
+        _max: max
+    };
+}
+
+function formatZahl(z) {
+    if (!isFinite(z)) return "-";
+    if (Math.abs(z) >= 1000) return z.toLocaleString("de-DE", { maximumFractionDigits: 2 });
+    return z.toLocaleString("de-DE", { maximumFractionDigits: 4 });
+}
+
+/**
+ * Rendert die Kennzahlen-Karten.
+ */
+function rendereKarten(kennzahlen) {
+    kartenEl.innerHTML = "";
+    for (const [label, wert] of Object.entries(kennzahlen)) {
+        if (label.startsWith("_")) continue; // interne Felder überspringen
+        const karte = document.createElement("div");
+        karte.className = "karte";
+        karte.innerHTML = `
+            <span class="label">${label}</span>
+            <span class="wert">${wert}</span>
+        `;
+        kartenEl.appendChild(karte);
+    }
+}
+
+/**
+ * Zeichnet ein Histogramm der Werteverteilung.
+ */
+function zeichneHistogramm(werte, spalte, min, max) {
+    // min/max werden übergeben, damit Math.min(...werte) bei großen Arrays
+    // keinen Stack-Overflow erzeugt.
+    const anzahlBuckets = Math.min(20, Math.max(5, Math.round(Math.sqrt(werte.length))));
+    const bucketBreite = (max - min) / anzahlBuckets || 1;
+
+    const buckets = new Array(anzahlBuckets).fill(0);
+    const labels = [];
+    for (let i = 0; i < anzahlBuckets; i++) {
+        const von = min + i * bucketBreite;
+        labels.push(formatZahl(von));
+    }
+    for (let i = 0; i < werte.length; i++) {
+        let idx = Math.floor((werte[i] - min) / bucketBreite);
+        if (idx >= anzahlBuckets) idx = anzahlBuckets - 1;
+        if (idx < 0) idx = 0;
+        buckets[idx]++;
+    }
+
+    if (chartInstanz) chartInstanz.destroy();
+    const ctx = document.getElementById("chart").getContext("2d");
+    chartInstanz = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Häufigkeit – ${spalte}`,
+                data: buckets,
+                backgroundColor: "#2980b9",
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: true } },
+            scales: {
+                x: { title: { display: true, text: spalte } },
+                y: { beginAtZero: true, title: { display: true, text: "Anzahl" } }
+            }
+        }
+    });
+}
+
+/**
+ * Zeigt die ersten 50 Zeilen als Tabelle.
+ */
+function zeigeTabelle() {
+    const maxZeilen = Math.min(50, aktuelleDaten.length);
+    let html = "<thead><tr>";
+    spaltenNamen.forEach(sp => html += `<th>${sp}</th>`);
+    html += "</tr></thead><tbody>";
+    for (let i = 0; i < maxZeilen; i++) {
+        html += "<tr>";
+        spaltenNamen.forEach(sp => {
+            html += `<td>${aktuelleDaten[i][sp] ?? ""}</td>`;
+        });
+        html += "</tr>";
+    }
+    html += "</tbody>";
+    datenTabelle.innerHTML = html;
+}
+
+/**
+ * Zeigt eine Fehlermeldung im Upload-Bereich.
+ */
+function zeigeFehler(nachricht) {
+    entferneFehler();
+    const div = document.createElement("div");
+    div.className = "fehler";
+    div.id = "fehlerBox";
+    div.textContent = nachricht;
+    uploadBox.parentElement.appendChild(div);
+}
+
+function entferneFehler() {
+    const alt = document.getElementById("fehlerBox");
+    if (alt) alt.remove();
+}
+
+</script>
+</body>
+</html>
+

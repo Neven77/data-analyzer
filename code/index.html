@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- SheetJS: Bibliothek zum Lesen von Excel-Dateien (xlsx, xls) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Chart.js: für einfache Diagramme -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Data Analyzer</h1>
+        <p class="zeitstempel">CSV-, Excel- oder TSV-Datei laden und analysieren</p>
+    </header>
+
+    <main>
+        <!-- Datei-Auswahl -->
+        <section class="upload">
+            <h2>1. Datei laden</h2>
+            <div class="upload-box" id="uploadBox">
+                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.tsv" hidden>
+                <label for="fileInput" class="upload-button">Datei auswählen</label>
+                <p class="hinweis">
+                    Unterstützte Formate: <strong>.csv</strong>, <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.tsv</strong>
+                </p>
+                <p class="dateiname" id="dateiname">Keine Datei ausgewählt</p>
+            </div>
+        </section>
+
+        <!-- Auswahl der zu analysierenden Spalte (wird dynamisch befüllt) -->
+        <section class="spaltenwahl" id="spaltenwahlSection" hidden>
+            <h2>2. Spalte wählen</h2>
+            <label for="spalteSelect">Numerische Spalte für die Analyse:</label>
+            <select id="spalteSelect"></select>
+        </section>
+
+        <!-- Kennzahlen -->
+        <section class="kennzahlen" id="kennzahlenSection" hidden>
+            <h2>Kennzahlen</h2>
+            <div class="karten" id="karten"></div>
+        </section>
+
+        <!-- Diagramm -->
+        <section class="diagramm" id="diagrammSection" hidden>
+            <h2>Verteilung</h2>
+            <canvas id="chart"></canvas>
+        </section>
+
+        <!-- Datentabelle -->
+        <section class="messtabelle" id="tabelleSection" hidden>
+            <h2>Datenvorschau (erste 50 Zeilen)</h2>
+            <div class="tabelle-scroll">
+                <table id="datenTabelle"></table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Data Analyzer &ndash; HTML/JS-Projekt erstellt von Neven Odrljin</p>
+        <p style="margin-top:0.5rem;font-size:0.95em;">
+            Kontakt:
+            <a href="https://www.linkedin.com/in/neveno/" target="_blank" rel="noopener">LinkedIn</a> |
+            <a href="https://odrljin.ch/" target="_blank" rel="noopener">odrljin.ch</a>
+        </p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Ignore backup, temp and OS files
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Ignore local test data
+/data/*.private.csv
+
+# Ignore migrated legacy folders
+single-file/

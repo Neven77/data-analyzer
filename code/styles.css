@@ -1,0 +1,216 @@
+/* ============================================
+   styles.css – Styling für den Data Analyzer
+   (im gleichen Stil wie der Mini Calibration Analyzer)
+   ============================================ */
+
+/* --- Allgemeine Einstellungen --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+/* --- Kopfbereich --- */
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+header h1 {
+    font-size: 2rem;
+    color: #1a5276;
+}
+
+.zeitstempel {
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+/* --- Abschnittsüberschriften --- */
+h2 {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #ddd;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+/* --- Upload-Bereich --- */
+.upload-box {
+    background: white;
+    border: 2px dashed #b3cde0;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-box.dragover {
+    border-color: #2980b9;
+    background: #eaf2f8;
+}
+
+.upload-button {
+    display: inline-block;
+    background-color: #2980b9;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.upload-button:hover {
+    background-color: #1f618d;
+}
+
+.hinweis {
+    color: #777;
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+}
+
+.dateiname {
+    margin-top: 0.6rem;
+    font-style: italic;
+    color: #555;
+}
+
+/* --- Spaltenwahl --- */
+.spaltenwahl label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.spaltenwahl select {
+    width: 100%;
+    max-width: 360px;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    font-size: 1rem;
+}
+
+/* --- Kennzahlen-Karten --- */
+.karten {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.karte {
+    background: white;
+    border-radius: 8px;
+    padding: 1.2rem;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    border-left: 4px solid #2980b9;
+}
+
+.karte .label {
+    display: block;
+    font-size: 0.8rem;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.karte .wert {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* --- Diagramm --- */
+.diagramm canvas {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    max-height: 360px;
+}
+
+/* --- Datentabelle --- */
+.tabelle-scroll {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #2980b9;
+    color: white;
+}
+
+th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+tbody tr:hover {
+    background-color: #eaf2f8;
+}
+
+/* --- Fehlermeldung --- */
+.fehler {
+    background: #fdedec;
+    color: #c0392b;
+    border-left: 4px solid #e74c3c;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+}
+
+/* --- Fußzeile --- */
+footer {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e0e0e0;
+    color: #aaa;
+    font-size: 0.85rem;
+}
