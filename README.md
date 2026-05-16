@@ -2,6 +2,10 @@
 
 Einfaches Analyse-Tool für Tabellen-Daten (CSV, TSV, Excel). Läuft direkt im Browser, ohne Installation oder Server. Ziel: Schnell sehen, was in einer Datei steckt.
 
+**Online-Demo:**
+Das Tool kann direkt über [GitHub Pages](https://neven77.github.io/data-analyzer/) ausprobiert werden (oder lokal: `index.html` im Hauptordner öffnen).
+
+
 ## Warum dieses Projekt?
 
 Ich habe das Tool gebaut, weil Kollegen oft mehrere CSV-Dateien auf dem Desktop hatten und schnell wissen wollten, was drinsteht. Es sollte so einfach wie möglich sein: HTML öffnen, Datei per Drag & Drop reinziehen, fertig. Keine grossen Extras, sondern schnelle Übersicht.
@@ -30,7 +34,7 @@ Im Ordner `data/` liegt eine Beispiel-Datei (`example.csv`) mit Testdaten. Es we
 
 ## Wie funktioniert es?
 
-1. Datei `data-analyzer.html` im Browser öffnen
+1. Datei `index.html` im Hauptordner im Browser öffnen (oder GitHub Pages nutzen)
 2. Datei auswählen oder per Drag & Drop reinziehen
 3. Spalte wählen, Ergebnis anschauen
 
@@ -39,7 +43,7 @@ Im Ordner `data/` liegt eine Beispiel-Datei (`example.csv`) mit Testdaten. Es we
 
 ```text
 data-analyzer/
-|-- data-analyzer.html        # Ein-Datei-Version für schnelle Nutzung
+|-- index.html                # Ein-Datei-Version für Demo, GitHub Pages und schnelle Nutzung
 |-- code/
 |   |-- index.html            # Quellcode: Hauptoberfläche
 |   |-- styles.css            # Quellcode: Aussehen
@@ -55,7 +59,7 @@ data-analyzer/
 
 ## Nutzung
 
-Keine Installation nötig. Einfach `data-analyzer.html` im Browser öffnen und loslegen.
+Keine Installation nötig. Einfach `index.html` im Browser öffnen und loslegen.
 
 Hinweis: Für Excel und Diagramm braucht das Tool beim ersten Laden Internet (wegen der Bibliotheken). CSV geht auch offline.
 
