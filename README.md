@@ -5,6 +5,15 @@ Einfaches Analyse-Tool für Tabellen-Daten (CSV, TSV, Excel). Läuft direkt im B
 **Online-Demo:**
 Das Tool kann direkt über [GitHub Pages](https://neven77.github.io/data-analyzer/) ausprobiert werden (oder lokal: `index.html` im Hauptordner öffnen).
 
+---
+
+## Screenshot – So sieht es aus
+
+![Data Analyzer Demo – Datenanalyse mit Kennzahlen und Diagramm](img/data-analyzer-screenshot.png)
+
+**Beispiel:** example.csv wird geladen → Kennzahlen berechnet (Anzahl, Min/Max, Mittelwert, Median, Standardabweichung) → Verteilung als Diagramm → Datenvorschau.
+
+---
 
 ## Warum dieses Projekt?
 
@@ -50,6 +59,8 @@ data-analyzer/
 |   `-- app.js                # Quellcode: Logik
 |-- data/
 |   `-- example.csv           # Beispieldaten
+|-- img/
+|   `-- screenshot.png        # Demo-Screenshot (für README)
 |-- LICENSE
 |-- README.md
 |-- BACKLOG.md                # Ideen für spätere Erweiterungen
